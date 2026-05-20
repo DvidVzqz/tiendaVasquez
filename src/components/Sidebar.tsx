@@ -3,9 +3,9 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
-  Users,
   Settings,
   ChevronLeft,
+  Search,
 } from "lucide-react";
 
 const menuItems = [
@@ -15,9 +15,9 @@ const menuItems = [
     icon: LayoutDashboard,
   },
   {
-    name: "Usuarios",
-    path: "/users",
-    icon: Users,
+    name: "Buscar",
+    path: "/search",
+    icon: Search,
   },
   {
     name: "Configuración",
@@ -27,23 +27,18 @@ const menuItems = [
 ];
 
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   return (
     <aside
-      className={`h-full bg-gray-900 text-white flex flex-col transition-all duration-300 ${
-        collapsed ? "w-20" : "w-64"
-      }`}
+      className={`h-full bg-gray-800 text-white flex flex-col transition-all duration-300 ${collapsed ? "w-14" : "w-64"}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4">
-        {!collapsed && <h1 className="text-lg font-bold">Admin</h1>}
 
         <button onClick={() => setCollapsed(!collapsed)}>
           <ChevronLeft
-            className={`transition-transform ${
-              collapsed ? "rotate-180" : ""
-            }`}
+            className={`transition-transform ${collapsed ? "rotate-180" : ""}`}
           />
         </button>
       </div>

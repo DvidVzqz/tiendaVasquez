@@ -8,8 +8,19 @@ export interface productSchema {
 }
 
 export interface searchProductSchema {
-  supplierId: string | null;
-  minPrice: number | null;
-  maxPrice: number | null;
-  name: string | null;
+  supplierId?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  name?: string;
+}
+
+export interface CartProduct extends productSchema {
+  quantity: number;
+}
+
+export interface Product extends productSchema {
+  supplier?: {
+    id: string;
+    name: string;
+  };
 }

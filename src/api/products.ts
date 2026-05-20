@@ -2,17 +2,9 @@ import type { productSchema, searchProductSchema } from "../interfaces/productIn
 import api from "./client";
 import { useQuery } from "@tanstack/react-query";
 
-export function getProduct(codigo: string) {
-  return useQuery({
-    queryKey: ["getProduct"],
-    queryFn: () =>
-      api.get("/product/", {
-        params: {
-          code: codigo,
-        },
-      }),
-  });
-}
+export const getProduct = async (code: string) => {
+  return api.get("/product/", { params: { code } });
+};
 
 export function setProduct(product: productSchema) {
   return useQuery({
@@ -21,12 +13,10 @@ export function setProduct(product: productSchema) {
   });
 }
 
-export function searchProduct(params: searchProductSchema) {
-  return useQuery({
-    queryKey: ["searchProduct"],
-    queryFn: () =>
-      api.get("/product/search/", {
-        params,
-      }),
+export async function searchProducts(params: searchProductSchema) {
+  const { data } = await api.get("/product/search", {
+    params,
   });
+
+  return data?.data;
 }

@@ -13,10 +13,10 @@ export function setProduct(product: productSchema) {
   });
 }
 
-export async function searchProducts(params: searchProductSchema) {
+export async function searchProducts({ limit = 20, ...params }: searchProductSchema) {
   const { data } = await api.get("/product/search", {
-    params,
+    params: { ...params, limit },
   });
 
-  return data?.data;
+  return data;
 }

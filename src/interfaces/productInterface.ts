@@ -12,6 +12,8 @@ export interface searchProductSchema {
   minPrice?: number;
   maxPrice?: number;
   name?: string;
+  cursor?: string;
+  limit?: number;
 }
 
 export interface CartProduct extends productSchema {

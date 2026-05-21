@@ -1,108 +1,93 @@
 import { useState } from "react";
-import SearchProductCard from "../components/SearchProductCard";
-import type { searchProductSchema } from "../interfaces/productInterface";
-import { searchProducts } from "../api/products";
 import { useDebounce } from "../hooks/useDebounce";
+import { searchSales } from "../api/sales";
+import type { searchSaleSchema } from "../interfaces/salesInterface";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 
-export default function Search() {
-    const [filters, setFilters] = useState<searchProductSchema>({ name: "", supplierId: "" });
-
+export default function History() {
+    const [filters, setFilters] = useState<searchSaleSchema>({ });
     const debouncedFilters = useDebounce(filters, 500);
+
     const {
-        datos: products,
+        datos: sales,
         isFetchingNextPage, loadMoreRef,
         isLoading, } = useInfiniteScroll({
-            queryFn: ({ pageParam }) => searchProducts({
+            queryFn: ({ pageParam }) => searchSales({
                 ...debouncedFilters,
                 ...(pageParam ? { cursor: pageParam } : {}),
             }),
-            queryKey: "products-search",
+            queryKey: "sales-search",
             debouncedFilters
         });
     return (
         <div className="h-screen p-1 overflow-hidden flex flex-col">
 
-            {/* Filtros */}
             <div className="bg-black p-4 rounded-xl mb-1 grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Nombre */}
+
+                {/* Fecha inicio */}
                 <input
-                    type="text"
-                    placeholder="Buscar producto..."
-                    value={filters.name || ""}
+                    type="date"
+                    value={filters.startDate || ""}
                     onChange={(e) =>
                         setFilters((prev) => ({
                             ...prev,
-                            name: e.target.value,
+                            startDate: e.target.value,
                         }))
                     }
                     className="bg-gray-900 rounded-lg px-3 py-2 outline-none"
                 />
 
-                {/* Precio mínimo */}
+                {/* Fecha fin */}
+                <input
+                    type="date"
+                    value={filters.endDate || ""}
+                    onChange={(e) =>
+                        setFilters((prev) => ({
+                            ...prev,
+                            endDate: e.target.value,
+                        }))
+                    }
+                    className="bg-gray-900 rounded-lg px-3 py-2 outline-none"
+                />
+
+                {/* Total mínimo */}
                 <input
                     type="number"
-                    placeholder="Precio mínimo"
-                    value={filters.minPrice || ""}
+                    placeholder="Total mínimo"
+                    value={filters.minTotal || ""}
                     onChange={(e) =>
                         setFilters((prev) => ({
                             ...prev,
-                            minPrice: Number(e.target.value),
+                            minTotal: Number(e.target.value),
                         }))
                     }
                     className="bg-gray-900 rounded-lg px-3 py-2 outline-none"
                 />
 
-                {/* Precio máximo */}
+                {/* Total máximo */}
                 <input
                     type="number"
-                    placeholder="Precio máximo"
-                    value={filters.maxPrice || ""}
+                    placeholder="Total máximo"
+                    value={filters.maxTotal || ""}
                     onChange={(e) =>
                         setFilters((prev) => ({
                             ...prev,
-                            maxPrice: Number(e.target.value),
+                            maxTotal: Number(e.target.value),
                         }))
                     }
                     className="bg-gray-900 rounded-lg px-3 py-2 outline-none"
                 />
-
-                {/* Proveedor */}
-                <select
-                    value={filters.supplierId || ""}
-                    onChange={(e) =>
-                        setFilters((prev) => ({
-                            ...prev,
-                            supplierId: e.target.value,
-                        }))
-                    }
-                    className="bg-gray-900 rounded-lg px-3 py-2 outline-none"
-                >
-                    <option value="">
-                        Todos los proveedores
-                    </option>
-
-                    {/* {suppliersMock.map((supplier) => (
-                        <option
-                            key={supplier.id}
-                            value={supplier.id}
-                        >
-                            {supplier.name}
-                        </option>
-                    ))} */}
-                </select>
             </div>
 
-            {/* Productos */}
             <div className="bg-black rounded-2xl shadow-md p-4 overflow-y-auto min-h-0 flex-1">
                 {isLoading && (
-                    <p>Cargando productos...</p>
+                    <p>Cargando ventas...</p>
                 )}
 
-                {products.map((product: any) => (
-                    <SearchProductCard
-                        key={product.id}
-                        product={product}
+                {/* {sales.map((sale: any) => (
+                    <SearchSaleCard
+                        key={sale.id}
+                        sale={sale}
                         onAddToCart={() => {
                             console.log("Agregar");
                         }}
@@ -113,7 +98,7 @@ export default function Search() {
                             console.log("Eliminar");
                         }}
                     />
-                ))}
+                ))} */}
 
                 <div
                     ref={loadMoreRef}

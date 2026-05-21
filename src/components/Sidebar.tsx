@@ -6,18 +6,30 @@ import {
   Settings,
   ChevronLeft,
   Search,
+  History,
+  Store,
 } from "lucide-react";
 
 const menuItems = [
   {
     name: "Dashboard",
-    path: "/",
+    path: "/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    name: "Dashboard",
+    path: "/home",
+    icon: Store,
   },
   {
     name: "Buscar",
     path: "/search",
     icon: Search,
+  },
+  {
+    name: "Historial",
+    path: "/history",
+    icon: History,
   },
   {
     name: "Configuración",

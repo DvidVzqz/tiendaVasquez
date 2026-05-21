@@ -1,11 +1,8 @@
 // 823703800360
 import { useReducer, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-
 import { getProduct } from "../api/products";
-
 import ProductCard from "../components/CartProduct";
-
 import type { CartProduct } from "../interfaces/productInterface";
 
 type CartAction =
@@ -77,8 +74,6 @@ function cartReducer(
 
 export default function Home() {
   const [code, setCode] = useState("");
-
-  // 🧮 Calculadora
   const [calculator, setCalculator] = useState("");
 
   const [cart, dispatch] = useReducer(

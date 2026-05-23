@@ -4,12 +4,14 @@ import { useMutation } from "@tanstack/react-query";
 import { getProduct } from "../api/products";
 import ProductCard from "../components/CartProduct";
 import type { CartProduct } from "../interfaces/productInterface";
+import { postSale } from "../api/sales";
 
 type CartAction =
   | { type: "ADD_PRODUCT"; payload: CartProduct }
   | { type: "INCREASE"; payload: string }
   | { type: "DECREASE"; payload: string }
-  | { type: "REMOVE"; payload: string };
+  | { type: "REMOVE"; payload: string }
+  | { type: "REMOVE_ALL"; };
 
 function cartReducer(
   state: CartProduct[],
@@ -67,6 +69,9 @@ function cartReducer(
         p => p.code !== action.payload
       );
 
+    case "REMOVE_ALL":
+      return [];
+
     default:
       return state;
   }
@@ -94,6 +99,17 @@ export default function Home() {
     },
     onError: () => {
       console.error("Producto no encontrado");
+    },
+  });
+
+  const saleMutation = useMutation({
+    mutationFn: postSale,
+
+    onSuccess: () => {
+      dispatch({ type: "REMOVE_ALL" });
+    },
+    onError: () => {
+      console.error("Venta no registrada");
     },
   });
 
@@ -129,6 +145,10 @@ export default function Home() {
   ) => {
     setCalculator(prev => prev + value);
   };
+
+  const handleSubmit = () => {
+    saleMutation.mutate({ paymentMethod: "CASH", extra, items: cart.map(x => ({ productId: x.id, quantity: x.quantity })) });
+  }
 
   return (
     <div className="h-screen flex-1 grid grid-cols-12 gap-1 p-1 overflow-hidden">
@@ -260,7 +280,9 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <button className="w-full mt-6 bg-green-500 hover:bg-green-600 rounded-xl py-4 text-xl font-bold">
+          <button
+            onClick={handleSubmit}
+            className="w-full mt-6 bg-green-500 hover:bg-green-600 rounded-xl py-4 text-xl font-bold">
             Cobrar
           </button>
         </div>

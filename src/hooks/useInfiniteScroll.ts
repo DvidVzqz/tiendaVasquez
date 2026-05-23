@@ -1,12 +1,15 @@
 import { useEffect, useRef } from "react";
-import { useInfiniteQuery, type QueryFunction } from "@tanstack/react-query";
+import { useInfiniteQuery, type InfiniteData, type QueryFunction } from "@tanstack/react-query";
+import type { responseInterface } from "../interfaces/apiResponseInterface";
 interface Props {
     queryFn: QueryFunction<any, any[], any>,
     queryKey: string,
     debouncedFilters: { [key: string]: any }
 }
 
-export const useInfiniteScroll = ({
+export const useInfiniteScroll = <
+    T
+>({
     queryFn,
     queryKey,
     debouncedFilters
@@ -17,7 +20,7 @@ export const useInfiniteScroll = ({
         fetchNextPage,
         hasNextPage,
         ...rest
-    } = useInfiniteQuery({
+    } = useInfiniteQuery<responseInterface<T>, Error, InfiniteData<responseInterface<T>, unknown>, any[], any>({
         queryKey: [queryKey, debouncedFilters],
         initialPageParam: null,
         queryFn,

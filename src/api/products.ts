@@ -6,6 +6,13 @@ export const getProduct = async (code: string) => {
   return api.get("/product/", { params: { code } });
 };
 
+export const postProduct = async (product: productSchema) => {
+  return api.post("/product/", product);
+};
+
+export function putProduct(id: string, product: productSchema) {
+  return api.put(`/product/${id}`, product);
+}
 export function setProduct(product: productSchema) {
   return useQuery({
     queryKey: ["setProduct"],

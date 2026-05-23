@@ -1,8 +1,7 @@
 import type { Product } from "./productInterface";
 
 export interface salesSchema {
-    total: number
-    createdAt: string | Date;
+    extra: number,
 }
 export interface searchSaleSchema {
     startDate?: string;
@@ -13,11 +12,21 @@ export interface searchSaleSchema {
     limit?: number;
 }
 export interface Sale extends salesSchema {
+    total: number,
+    createdAt: string;
+    paymentMethod: "CARD" | "CASH",
     items?: {
         productId: string,
         quantity: number,
         price: number,
         subtotal: number,
         product?: Product
-    };
+    }[];
+}
+export interface SaleVenta extends salesSchema {
+    paymentMethod: "CARD" | "CASH",
+    items: {
+        productId: string,
+        quantity: number,
+    }[];
 }

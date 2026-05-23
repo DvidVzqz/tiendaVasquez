@@ -7,31 +7,31 @@ export default function Dashboard() {
 
             <div className="overflow-y-auto min-h-0 flex-1">
 
-            <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-3">
-                <div>
-                    <h1 className="text-xl font-bold text-gray-800">
-                        Dashboard
-                    </h1>
-                </div>
+                <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-3">
+                    <div>
+                        <h1 className="text-xl font-bold text-gray-800">
+                            Dashboard
+                        </h1>
+                    </div>
 
-                <div className="flex gap-2">
-                    <button className="px-4 py-2 rounded-xl bg-black text-white">
-                        Hoy
-                    </button>
+                    <div className="flex gap-2">
+                        <button className="px-4 py-2 rounded-xl bg-black text-white">
+                            Hoy
+                        </button>
 
-                    <button className="px-4 py-2 rounded-xl bg-black shadow">
-                        Semana
-                    </button>
+                        <button className="px-4 py-2 rounded-xl bg-black shadow">
+                            Semana
+                        </button>
 
-                    <button className="px-4 py-2 rounded-xl bg-black shadow">
-                        Mes
-                    </button>
+                        <button className="px-4 py-2 rounded-xl bg-black shadow">
+                            Mes
+                        </button>
 
-                    <button className="px-4 py-2 rounded-xl bg-black shadow">
-                        Año
-                    </button>
-                </div>
-            </header>
+                        <button className="px-4 py-2 rounded-xl bg-black shadow">
+                            Año
+                        </button>
+                    </div>
+                </header>
                 <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 mb-3">
 
                     <div className="bg-black rounded-2xl shadow p-5">

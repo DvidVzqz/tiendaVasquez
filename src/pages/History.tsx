@@ -3,9 +3,10 @@ import { useDebounce } from "../hooks/useDebounce";
 import { searchSales } from "../api/sales";
 import type { searchSaleSchema } from "../interfaces/salesInterface";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+import SaleCard from "../components/SaleCard";
 
 export default function History() {
-    const [filters, setFilters] = useState<searchSaleSchema>({ });
+    const [filters, setFilters] = useState<searchSaleSchema>({});
     const debouncedFilters = useDebounce(filters, 500);
 
     const {
@@ -40,11 +41,11 @@ export default function History() {
                 {/* Fecha fin */}
                 <input
                     type="date"
-                    value={filters.endDate || ""}
+                    value={filters.endDate?.split('T')[0] || ""}
                     onChange={(e) =>
                         setFilters((prev) => ({
                             ...prev,
-                            endDate: e.target.value,
+                            endDate: e.target.value + "T23:59:59",
                         }))
                     }
                     className="bg-gray-900 rounded-lg px-3 py-2 outline-none"
@@ -84,21 +85,15 @@ export default function History() {
                     <p>Cargando ventas...</p>
                 )}
 
-                {/* {sales.map((sale: any) => (
-                    <SearchSaleCard
+                {sales.map((sale: any) => (
+                    <SaleCard
                         key={sale.id}
                         sale={sale}
-                        onAddToCart={() => {
-                            console.log("Agregar");
-                        }}
-                        onEdit={() => {
-                            console.log("Editar");
-                        }}
-                        onDelete={() => {
-                            console.log("Eliminar");
+                        onPrint={() => {
+                            console.log("onPrint");
                         }}
                     />
-                ))} */}
+                ))}
 
                 <div
                     ref={loadMoreRef}

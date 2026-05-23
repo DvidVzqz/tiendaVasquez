@@ -8,6 +8,7 @@ import {
   Search,
   History,
   Store,
+  Users2Icon,
 } from "lucide-react";
 
 const menuItems = [
@@ -17,7 +18,7 @@ const menuItems = [
     icon: LayoutDashboard,
   },
   {
-    name: "Dashboard",
+    name: "Home",
     path: "/home",
     icon: Store,
   },
@@ -30,6 +31,11 @@ const menuItems = [
     name: "Historial",
     path: "/history",
     icon: History,
+  },
+  {
+    name: "Proveedores",
+    path: "/suppliers",
+    icon: Users2Icon,
   },
   {
     name: "Configuración",

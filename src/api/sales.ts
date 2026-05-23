@@ -1,13 +1,9 @@
-import type { salesSchema, searchSaleSchema } from "../interfaces/salesInterface";
+import type { SaleVenta, searchSaleSchema } from "../interfaces/salesInterface";
 import api from "./client";
 import { useQuery } from "@tanstack/react-query";
 
-
-export function setSale(sale: salesSchema) {
-  return useQuery({
-    queryKey: ["setSale"],
-    queryFn: () => api.post("/sale/", sale),
-  });
+export function postSale(sale: SaleVenta) {
+  return api.post("/sale/", sale);
 }
 
 export function getSale(id: string) {

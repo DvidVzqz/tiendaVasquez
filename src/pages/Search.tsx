@@ -1,6 +1,6 @@
 import { useState } from "react";
 import SearchProductCard from "../components/SearchProductCard";
-import type { Product, productSchema, searchProductSchema } from "../interfaces/productInterface";
+import type { CartProduct, Product, productSchema, searchProductSchema } from "../interfaces/productInterface";
 import { postProduct, putProduct, searchProducts } from "../api/products";
 import { useDebounce } from "../hooks/useDebounce";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
@@ -9,8 +9,11 @@ import { BaseModal } from "../components/UI/modal";
 import { useFormulario } from "../hooks/useFormulario";
 import { Input } from "../components/UI/Input";
 import { Controller } from "react-hook-form";
+import { updateProductInAllCarts } from "../hooks/useCartStore";
+import { useSaleManager } from "../contexts/SaleManagerContext";
 
 export default function Search() {
+    const { openSaleSelector } = useSaleManager();
     const [filters, setFilters] = useState<searchProductSchema>({});
     const [openForm, setOpenForm] = useState(false);
 
@@ -27,7 +30,6 @@ export default function Search() {
             debouncedFilters
         });
 
-
     const {
         useForm: {
             control,
@@ -41,13 +43,15 @@ export default function Search() {
     } = useFormulario(
         {
             mutationFn: data => data.id ? putProduct(data.id, data as productSchema) : postProduct(data as productSchema),
-            onSuccess() {
+            onSuccess({ data }) {
                 refetch();
+                if (data.data) updateProductInAllCarts(data.data as CartProduct);
                 setOpenForm(false);
             },
         },
         { defaultValues: { type: 'UNIT' } },
     );
+
     return (
         <div className="h-screen p-1 overflow-hidden flex flex-col">
 
@@ -150,7 +154,7 @@ export default function Search() {
                         key={product.id}
                         product={product}
                         onAddToCart={() => {
-                            console.log("Agregar");
+                            openSaleSelector({ ...product as CartProduct });
                         }}
                         onEdit={() => {
                             setValues(product);
@@ -171,7 +175,6 @@ export default function Search() {
                     )}
                 </div>
             </div>
-
 
             {/* Modal de productos */}
             <BaseModal open={openForm} onClose={() => {

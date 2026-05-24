@@ -46,7 +46,7 @@ export default function SaleCard({
                 {/* ACTIONS */}
                 <button
                     onClick={() => setOpen(true)}
-                    className="h-12 w-12 flex items-center justify-center rounded-xl bg-gray-900 hover:bg-gray-800 transition"
+                    className="h-12 w-12 flex items-center justify-center rounded-xl bg-gray-700 hover:bg-gray-800 transition"
                 >
                     <Eye size={20} />
                 </button>

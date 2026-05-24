@@ -13,7 +13,7 @@ export interface searchSaleSchema {
 }
 export interface Sale extends salesSchema {
     total: number,
-    createdAt: string;
+    createdAt: string | Date;
     paymentMethod: "CARD" | "CASH",
     items?: {
         productId: string,

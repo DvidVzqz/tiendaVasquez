@@ -1,3 +1,4 @@
+import { Trash } from "lucide-react";
 import type { CartProduct } from "../interfaces/productInterface";
 
 
@@ -17,23 +18,35 @@ export default function ProductCard({
   const total = product.price * product.quantity;
 
   return (
-    <div className="flex items-center justify-between bg-gray-800 shadow-md rounded-xl p-4 mb-3">
+    <div className="bg-gray-950 border border-gray-800 rounded-2xl p-4 mb-3 flex items-center justify-between gap-4">
+
       {/* Info */}
-      <div className="flex flex-col">
-        <h2 className="text-lg font-semibold">{product.name}</h2>
-        <p className="text-sm text-gray-400">
-          Precio unitario: ${product.price.toFixed(2)}
-        </p>
-        <p className="text-sm font-medium">
-          Total: ${total.toFixed(2)}
-        </p>
+      <div className="flex items-center gap-4">
+        {product.supplier && (
+          <img
+            src={product.supplier.photo || "https://placehold.co/80x80"}
+            className="w-16 h-16 rounded-xl object-cover"
+          />
+        )}
+        <div>
+          <h2 className="text-lg font-semibold">
+            {product.name}
+          </h2>
+
+          <p className="text-sm text-gray-400">
+            Precio: ${product.price.toFixed(2)}
+          </p>
+          <p className="text-sm font-medium">
+            Total: ${total.toFixed(2)}
+          </p>
+        </div>
       </div>
 
       {/* Controles */}
       <div className="flex items-center gap-3">
         <button
           onClick={onDecrease}
-          className="px-3 py-1 bg-gray-900 hover:bg-gray-700 rounded-lg"
+          className="px-3 py-1 bg-gray-700 hover:bg-gray-800 rounded-lg"
         >
           -
         </button>
@@ -44,7 +57,7 @@ export default function ProductCard({
 
         <button
           onClick={onIncrease}
-          className="px-3 py-1 bg-gray-900 hover:bg-gray-700 rounded-lg"
+          className="px-3 py-1 bg-gray-700 hover:bg-gray-800 rounded-lg"
         >
           +
         </button>
@@ -54,9 +67,9 @@ export default function ProductCard({
       <div className="flex flex-col items-end gap-2">
         <button
           onClick={onRemove}
-          className="text-red-500 hover:text-red-700 text-sm"
+          className="px-3 py-2 text-red-500 hover:text-red-700 text-sm rounded-lg border border-gray-700"
         >
-          Eliminar
+          <Trash />
         </button>
       </div>
     </div>

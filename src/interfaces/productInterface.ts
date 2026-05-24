@@ -1,3 +1,5 @@
+import type { supplier } from "./supplierInterface";
+
 export interface productSchema {
   name: string;
   price: number;
@@ -21,10 +23,7 @@ export interface searchProductSchema {
 
 export interface Product extends productSchema {
   id: string,
-  supplier?: {
-    id: string;
-    name: string;
-  };
+  supplier?: supplier;
 }
 
 export interface CartProduct extends Product {

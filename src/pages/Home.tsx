@@ -1,127 +1,33 @@
 // 823703800360
-import { useReducer, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { getProduct } from "../api/products";
 import ProductCard from "../components/CartProduct";
-import type { CartProduct } from "../interfaces/productInterface";
 import { postSale } from "../api/sales";
-
-type CartAction =
-  | { type: "ADD_PRODUCT"; payload: CartProduct }
-  | { type: "INCREASE"; payload: string }
-  | { type: "DECREASE"; payload: string }
-  | { type: "REMOVE"; payload: string }
-  | { type: "REMOVE_ALL"; };
-
-function cartReducer(
-  state: CartProduct[],
-  action: CartAction
-) {
-  switch (action.type) {
-    case "ADD_PRODUCT": {
-      const exists = state.find(
-        p => p.code === action.payload.code
-      );
-
-      if (exists) {
-        return state.map(p =>
-          p.code === action.payload.code
-            ? {
-              ...p,
-              quantity: p.quantity + 1,
-            }
-            : p
-        );
-      }
-
-      return [
-        ...state,
-        {
-          ...action.payload,
-          quantity: 1,
-        },
-      ];
-    }
-
-    case "INCREASE":
-      return state.map(p =>
-        p.code === action.payload
-          ? {
-            ...p,
-            quantity: p.quantity + 1,
-          }
-          : p
-      );
-
-    case "DECREASE":
-      return state.map(p =>
-        p.code === action.payload &&
-          p.quantity > 1
-          ? {
-            ...p,
-            quantity: p.quantity - 1,
-          }
-          : p
-      );
-
-    case "REMOVE":
-      return state.filter(
-        p => p.code !== action.payload
-      );
-
-    case "REMOVE_ALL":
-      return [];
-
-    default:
-      return state;
-  }
-}
+import { getCartStore } from "../hooks/useCartStore";
+import { useParams } from "react-router-dom";
+import { SearchProductInput } from "../components/SearchProductInput";
 
 export default function Home() {
-  const [code, setCode] = useState("");
-  const [calculator, setCalculator] = useState("");
+  const { saleId = "base" } = useParams();
+  const useCartStore = getCartStore(saleId);
 
-  const [cart, dispatch] = useReducer(
-    cartReducer,
-    []
-  );
-
-  const productMutation = useMutation({
-    mutationFn: getProduct,
-
-    onSuccess: ({ data }) => {
-      dispatch({
-        type: "ADD_PRODUCT",
-        payload: data.data,
-      });
-
-      setCode("");
-    },
-    onError: () => {
-      console.error("Producto no encontrado");
-    },
-  });
+  const {
+    cart,
+    calculator,
+    setCalculator,
+    addProduct,
+    increase,
+    decrease,
+    remove,
+    clear,
+  } = useCartStore();
 
   const saleMutation = useMutation({
     mutationFn: postSale,
-
-    onSuccess: () => {
-      dispatch({ type: "REMOVE_ALL" });
-    },
+    onSuccess: clear,
     onError: () => {
       console.error("Venta no registrada");
     },
   });
-
-  const handleSearch = (
-    e: React.FormEvent
-  ) => {
-    e.preventDefault();
-
-    if (!code.trim()) return;
-
-    productMutation.mutate(code);
-  };
 
   // 🔥 Eval calculadora
   const extra = (() => {
@@ -135,16 +41,10 @@ export default function Home() {
   })();
 
   const totalItems = cart.reduce((acc, p) => acc + p.quantity, 0);
-
   const subtotal = cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
-
   const total = subtotal + extra;
 
-  const addCalculatorValue = (
-    value: string
-  ) => {
-    setCalculator(prev => prev + value);
-  };
+  const addCalculatorValue = (value: string) => setCalculator(calculator + value);
 
   const handleSubmit = () => {
     saleMutation.mutate({ paymentMethod: "CASH", extra, items: cart.map(x => ({ productId: x.id, quantity: x.quantity })) });
@@ -164,22 +64,13 @@ export default function Home() {
               key={product.code}
               product={product}
               onIncrease={() =>
-                dispatch({
-                  type: "INCREASE",
-                  payload: product.code,
-                })
+                increase(product.code)
               }
               onDecrease={() =>
-                dispatch({
-                  type: "DECREASE",
-                  payload: product.code,
-                })
+                decrease(product.code)
               }
               onRemove={() =>
-                dispatch({
-                  type: "REMOVE",
-                  payload: product.code,
-                })
+                remove(product.code)
               }
             />
           ))}
@@ -188,27 +79,9 @@ export default function Home() {
 
       {/* 💰 PANEL DERECHO */}
       <div className="col-span-3 flex flex-col gap-1">
-        <form
-          onSubmit={handleSearch}
-          className="flex p-3 bg-black rounded-2xl shadow-md gap-1 w-full"
-        >
-          <input
-            type="text"
-            value={code}
-            onChange={(e) =>
-              setCode(e.target.value)
-            }
-            placeholder="Buscar"
-            className="min-w-0 border rounded-lg px-3 py-2"
-          />
-
-          <button
-            type="submit"
-            className="bg-blue-500 px-4 rounded-lg"
-          >
-            Agregar
-          </button>
-        </form>
+        <div className="flex p-3 bg-black rounded-2xl shadow-md gap-1 w-full">
+          <SearchProductInput onSelectProduct={addProduct} />
+        </div>
 
         {/* 💰 Totales */}
         <div className="bg-black rounded-2xl shadow-md p-6 flex-1 flex flex-col justify-between">
@@ -251,11 +124,7 @@ export default function Home() {
               />
 
               <button
-                onClick={() =>
-                  setCalculator(prev =>
-                    prev.slice(0, -1)
-                  )
-                }
+                onClick={() => setCalculator(calculator.slice(0, -1))}
                 className="px-4 rounded-lg bg-red-500 hover:bg-red-600 font-bold text-xl"
               >
                 ←

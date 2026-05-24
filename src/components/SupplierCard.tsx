@@ -14,7 +14,7 @@ export default function SupplierCard({
 
     return (
         <div
-            className="bg-gray-800 rounded-2xl shadow-md p-4 flex items-center justify-between"
+            className="bg-gray-950 border border-gray-800 rounded-2xl p-4 mb-3 flex items-center justify-between gap-4"
         >
             <div className="flex items-center gap-4">
                 <img
@@ -40,7 +40,8 @@ export default function SupplierCard({
                 </button>
                 <button
                     onClick={onReceive}
-                    className="px-4 py-2 rounded-lg bg-black text-white"
+                    
+                    className="px-4 py-2 rounded-xl bg-gray-700 hover:bg-gray-800 transition"
                 >
                     Recibir
                 </button>

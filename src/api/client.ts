@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const host='192.168.0.77:3000';
+export const host=import.meta.env.VITE_API_URL;
 // export const host='192.168.0.171:3000';
 const baseURL=`http://${host}`;
 

@@ -21,7 +21,7 @@ export interface DashboardData {
       }>;
     }>;
     byPaymentMethod: Array<{ method: "CARD" | "CASH"; count: number; total: number }>;
-    dailyBreakdown: Array<{ date: string; count: number; total: number }>;
+    dailyBreakdown: Array<{ date: string; count: number; total: number; extra: number }>;
   };
   products: {
     topSelling: Array<{ productId: string; name: string; quantity: number; revenue: number }>;

@@ -6,19 +6,20 @@ import Search from "./pages/Search";
 import History from "./pages/History";
 import Dashboard from "./pages/Dashboard";
 import Suppliers from "./pages/Suppliers";
+import Settings from "./pages/Settings";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    
+
     children: [
       { path: "home/:saleId", element: <Home /> },
       { index: true, path: "dashboard", element: <Dashboard /> },
       { path: "search", element: <Search /> },
       { path: "history", element: <History /> },
       { path: "suppliers", element: <Suppliers /> },
-      { path: "settings", element: <h2>Configuración</h2> },
+      { path: "settings", element: <Settings /> },
     ],
   },
 ]);

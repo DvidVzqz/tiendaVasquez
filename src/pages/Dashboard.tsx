@@ -75,9 +75,8 @@ export default function Dashboard() {
               <button
                 key={key}
                 onClick={() => setPreset(key)}
-                className={`px-4 py-2 rounded-xl ${
-                  preset === key ? "bg-gray-700 text-white" : "bg-black text-gray-300"
-                } shadow`}
+                className={`px-4 py-2 rounded-xl ${preset === key ? "bg-gray-700 text-white" : "bg-black text-gray-300"
+                  } shadow`}
               >
                 {PRESET_LABELS[key]}
               </button>
@@ -100,7 +99,7 @@ export default function Dashboard() {
         {data && (
           <>
             <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 mb-3">
-              <StatCard label="Ventas Totales" value={currency(data.sales.total)} />
+              <StatCard label="Ventas Totales" value={currency(data.sales.total + data.sales.extra)} />
               <StatCard label="Número de Ventas" value={String(data.sales.count)} />
               <StatCard label="Ticket Promedio" value={currency(data.sales.average)} />
               <StatCard label="Productos Vendidos" value={String(data.sales.totalProductsSold)} />
@@ -109,61 +108,61 @@ export default function Dashboard() {
             <section className="grid grid-cols-1 xl:grid-cols-3 gap-2 mb-3">
               <div className="xl:col-span-2 bg-black rounded-2xl shadow p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-gray-800">Ventas {(preset === 'today' ? 'de '  : 'por ') + PRESET_LABELS[preset]}</h2>
+                  <h2 className="text-lg font-bold text-gray-800">Ventas {(preset === 'today' ? 'de ' : 'por ') + PRESET_LABELS[preset]}</h2>
                 </div>
 
                 {data.sales.dailyBreakdown.length > 0 ? (
-                  <div className="h-72">
-                  <Bar
-                    data={{
-                      labels: data.sales.dailyBreakdown.map((d) =>
-                        new Date(d.date).toLocaleDateString("es-MX", { weekday: "short", day: "numeric" })
-                      ),
-                      datasets: [
-                        {
-                          label: "Total",
-                          data: data.sales.dailyBreakdown.map((d) => d.total),
-                          backgroundColor: "#3B82F6",
-                          borderRadius: 6,
-                        },
-                      ],
-                    }}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                          backgroundColor: "#1F2937",
-                          titleColor: "#F3F4F6",
-                          bodyColor: "#F3F4F6",
-                          callbacks: {
-                            title: (items) => {
-                              const idx = items[0].dataIndex;
-                              return new Date(data.sales.dailyBreakdown[idx].date).toLocaleDateString(
-                                "es-MX",
-                                { weekday: "long", day: "numeric", month: "short" }
-                              );
+                  <div className="h-80">
+                    <Bar
+                      data={{
+                        labels: data.sales.dailyBreakdown.map((d) =>
+                          new Date(d.date).toLocaleDateString("es-MX", { weekday: "short", day: "numeric" })
+                        ),
+                        datasets: [
+                          {
+                            label: "Total",
+                            data: data.sales.dailyBreakdown.map((d) => d.total + d.extra),
+                            backgroundColor: "#3B82F6",
+                            borderRadius: 6,
+                          },
+                        ],
+                      }}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: { display: false },
+                          tooltip: {
+                            backgroundColor: "#1F2937",
+                            titleColor: "#F3F4F6",
+                            bodyColor: "#F3F4F6",
+                            callbacks: {
+                              title: (items) => {
+                                const idx = items[0].dataIndex;
+                                return new Date(data.sales.dailyBreakdown[idx].date).toLocaleDateString(
+                                  "es-MX",
+                                  { weekday: "long", day: "numeric", month: "short" }
+                                );
+                              },
+                              label: (ctx) => `Total: ${currency(ctx.raw as number)}`,
                             },
-                            label: (ctx) => `Total: ${currency(ctx.raw as number)}`,
                           },
                         },
-                      },
-                      scales: {
-                        x: {
-                          ticks: { color: "#9CA3AF" },
-                          grid: { display: false },
+                        scales: {
+                          x: {
+                            ticks: { color: "#9CA3AF" },
+                            grid: { display: false },
+                          },
+                          y: {
+                            ticks: { color: "#9CA3AF" },
+                            grid: { color: "#374151" },
+                          },
                         },
-                        y: {
-                          ticks: { color: "#9CA3AF" },
-                          grid: { color: "#374151" },
-                        },
-                      },
-                    }}
-                  />
+                      }}
+                    />
                   </div>
                 ) : (
-                  <div className="h-80 flex items-center justify-center border rounded-xl bg-gray-50">
+                  <div className="h-80 flex items-center justify-center bg-black">
                     <span className="text-gray-400">Sin datos en este período</span>
                   </div>
                 )}
@@ -184,9 +183,8 @@ export default function Dashboard() {
                   {data.products.lowStock.map((p) => (
                     <div
                       key={p.id}
-                      className={`flex items-center justify-between p-3 rounded-xl ${
-                        p.stock === 0 ? "bg-red-50" : "bg-yellow-50"
-                      }`}
+                      className={`flex items-center justify-between p-3 rounded-xl ${p.stock === 0 ? "bg-red-50" : "bg-yellow-50"
+                        }`}
                     >
                       <div>
                         <p className="font-semibold text-gray-800">{p.name}</p>
@@ -195,9 +193,8 @@ export default function Dashboard() {
                         </p>
                       </div>
                       <span
-                        className={`font-bold text-lg ${
-                          p.stock === 0 ? "text-red-500" : "text-yellow-500"
-                        }`}
+                        className={`font-bold text-lg ${p.stock === 0 ? "text-red-500" : "text-yellow-500"
+                          }`}
                       >
                         {p.stock}
                       </span>
@@ -251,7 +248,7 @@ export default function Dashboard() {
                             <td className="py-3 font-medium">#{sale.id.slice(0, 6)}</td>
                             <td className="py-3 text-gray-500">{time(sale.createdAt)}</td>
                             <td className="py-3 font-bold text-green-600">
-                              {currency(sale.total)}
+                              {currency(sale.total + sale.extra)}
                             </td>
                           </tr>
                         ))}

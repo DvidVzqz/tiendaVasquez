@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const host=import.meta.env.VITE_API_URL;
-// export const host='192.168.0.171:3000';
-const baseURL=`http://${host}`;
+const host = localStorage.getItem("api_url") || import.meta.env.VITE_API_URL;
+
+const baseURL = host.startsWith("http") ? host : `http://${host}`;
 
 const api = axios.create({
   baseURL: baseURL,

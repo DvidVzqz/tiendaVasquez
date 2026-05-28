@@ -5,14 +5,18 @@ import { postSale } from "../api/sales";
 import { getCartStore } from "../hooks/useCartStore";
 import { useParams } from "react-router-dom";
 import { SearchProductInput } from "../components/SearchProductInput";
+import type { paymentMethodType } from "../interfaces/salesInterface";
 
 export default function Home() {
   const { saleId = "base" } = useParams();
   const useCartStore = getCartStore(saleId);
+  const savedCommission = Number(localStorage.getItem("card_commission"));
 
   const {
     cart,
     calculator,
+    paymentMethod,
+    setPaymentMethod,
     setCalculator,
     addProduct,
     increase,
@@ -42,12 +46,13 @@ export default function Home() {
 
   const totalItems = cart.reduce((acc, p) => acc + p.quantity, 0);
   const subtotal = cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
-  const total = subtotal + extra;
+  const comision = paymentMethod == "CARD" ? ((subtotal + extra) * (savedCommission / 100)) : 0;
+  const total = subtotal + extra + comision;
 
   const addCalculatorValue = (value: string) => setCalculator(calculator + value);
 
   const handleSubmit = () => {
-    saleMutation.mutate({ paymentMethod: "CASH", extra, items: cart.map(x => ({ productId: x.id, quantity: x.quantity })) });
+    saleMutation.mutate({ paymentMethod, extra, comision, items: cart.map(x => ({ productId: x.id, quantity: x.quantity })) });
   }
 
   return (
@@ -79,13 +84,24 @@ export default function Home() {
 
       {/* 💰 PANEL DERECHO */}
       <div className="col-span-3 flex flex-col gap-1">
-        <div className="flex p-3 bg-black rounded-2xl shadow-md gap-1 w-full">
+        <div className="flex p-2 bg-black rounded-2xl shadow-md gap-1 w-full">
           <SearchProductInput onSelectProduct={addProduct} />
         </div>
 
         {/* 💰 Totales */}
-        <div className="bg-black rounded-2xl shadow-md p-6 flex-1 flex flex-col justify-between">
-          <div className="space-y-3">
+        <div className="bg-black rounded-2xl shadow-md p-4 flex-1 flex flex-col justify-between">
+          <div className="flex gap-2 items-center">
+            <span>Tipo:</span>
+            <select
+              value={paymentMethod}
+              onChange={(e) => { setPaymentMethod(e.target.value as paymentMethodType) }}
+              className="bg-gray-900 rounded-lg px-3 py-2 outline-none w-full"
+            >
+              <option key="CASH" value="CASH">EFECTIVO</option>
+              <option key="CARD" value="CARD">TARJETA</option>
+            </select>
+          </div>
+          <div className="space-y-1">
             <div className="flex justify-between">
               <span>Productos</span>
               <span>{totalItems}</span>
@@ -105,9 +121,17 @@ export default function Home() {
               </span>
             </div>
 
-            <div className="border-t border-gray-700 pt-4 flex justify-between text-2xl font-bold">
-              <span>Total</span>
+            {paymentMethod == 'CARD' &&
+              <div className="flex justify-between">
+                <span>Comisión</span>
+                <span>
+                  ${comision.toFixed(2)}
+                </span>
+              </div>
+            }
 
+            <div className="border-t border-gray-700 pt-2 flex justify-between text-xl font-bold">
+              <span>Total</span>
               <span>
                 ${total.toFixed(2)}
               </span>
@@ -120,9 +144,8 @@ export default function Home() {
               <input
                 value={calculator}
                 readOnly
-                className="min-w-0 border rounded-lg px-3 py-2 text-right"
+                className="min-w-0 border rounded-lg px-3 py-2 text-right  w-full"
               />
-
               <button
                 onClick={() => setCalculator(calculator.slice(0, -1))}
                 className="px-4 rounded-lg bg-red-500 hover:bg-red-600 font-bold text-xl"

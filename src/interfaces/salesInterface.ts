@@ -1,7 +1,10 @@
 import type { Product } from "./productInterface";
 
+export type paymentMethodType = "CARD" | "CASH";
 export interface salesSchema {
     extra: number,
+    comision: number,
+    paymentMethod: paymentMethodType,
 }
 export interface searchSaleSchema {
     startDate?: string;
@@ -12,19 +15,19 @@ export interface searchSaleSchema {
     limit?: number;
 }
 export interface Sale extends salesSchema {
+    id: string,
     total: number,
     createdAt: string | Date;
-    paymentMethod: "CARD" | "CASH",
-    items?: {
-        productId: string,
+}
+export interface SaleTicket extends Sale {
+    items: {
+        name: string,
         quantity: number,
         price: number,
         subtotal: number,
-        product?: Product
     }[];
 }
 export interface SaleVenta extends salesSchema {
-    paymentMethod: "CARD" | "CASH",
     items: {
         productId: string,
         quantity: number,

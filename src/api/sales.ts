@@ -7,11 +7,7 @@ export function postSale(sale: SaleVenta) {
 }
 
 export function getSale(id: string) {
-  return useQuery({
-    queryKey: ["getSale"],
-    queryFn: () =>
-      api.get(`/sale/ticket/${id}`)
-  });
+  return api.get(`/sale/ticket/${id}`);
 }
 
 export async function searchSales({ limit = 20, ...params }: searchSaleSchema) {

@@ -1,10 +1,13 @@
 import { create, type Mutate, type StoreApi, type UseBoundStore } from "zustand";
 import { persist } from "zustand/middleware";
 import type { CartProduct } from "../interfaces/productInterface";
+import type { paymentMethodType } from "../interfaces/salesInterface";
 
 interface CartStore {
     cart: CartProduct[];
     calculator: string;
+    paymentMethod: paymentMethodType,
+    setPaymentMethod: (paymentMethod: paymentMethodType) => void;
     setCalculator: (cal: string) => void;
     addProduct: (product: CartProduct) => void;
     increase: (code: string) => void;
@@ -22,11 +25,13 @@ export const getCartStore = (id: string) => {
                 (set) => ({
                     cart: [],
                     calculator: "",
-                    setCalculator: (cal) => set(state => ({ ...state, calculator: cal })),
+                    paymentMethod: "CASH",
+                    setPaymentMethod: (paymentMethod) => set(() => ({ paymentMethod })),
+                    setCalculator: (cal) => set(() => ({ calculator: cal })),
                     addProduct: (product) =>
                         set((state) => {
                             const exists = state.cart.find(p => p.code === product.code);
-                            
+
                             if (exists) {
                                 return {
                                     cart: state.cart.map(p =>
@@ -105,7 +110,7 @@ export const updateProductInAllCarts = (updatedProduct: CartProduct) => {
     activeIds.forEach((id) => {
         const useCartStore = getCartStore(id);
 
-        const storeApi = useCartStore; 
+        const storeApi = useCartStore;
         const { cart } = storeApi.getState();
 
         const productExists = cart.some((p) => p.code === updatedProduct.code);
@@ -113,7 +118,7 @@ export const updateProductInAllCarts = (updatedProduct: CartProduct) => {
         if (productExists) {
             const newCart = cart.map((p) =>
                 p.code === updatedProduct.code
-                    ? { ...p, ...updatedProduct, quantity: p.quantity } 
+                    ? { ...p, ...updatedProduct, quantity: p.quantity }
                     : p
             );
             storeApi.setState({ cart: newCart });

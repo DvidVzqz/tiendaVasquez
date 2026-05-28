@@ -22,7 +22,6 @@ export function SaleManagerProvider({ children }: { children: React.ReactNode })
         mutationFn: getProduct,
         onSuccess: ({ data }) => {
             try {
-                
                 const pathParts = location.pathname.split("/");
                 const currentSaleId = pathParts[1] === "home" ? pathParts[2] : null;
 
@@ -30,15 +29,7 @@ export function SaleManagerProvider({ children }: { children: React.ReactNode })
                     const store = getCartStore(currentSaleId);
                     store.getState().addProduct(data.data);
                 } else {
-                    const existingSales = getActiveCartIds();
-
-                    if (existingSales.length === 1) {
-                        const targetId = existingSales[0];
-                        getCartStore(targetId).getState().addProduct(data.data);
-                        navigate(`/home/${targetId}`);
-                    } else {
-                        openSaleSelector(data.data);
-                    }
+                    openSaleSelector(data.data);
                 }
             } catch (error) {
                 console.error("Error al buscar el producto escaneado", error);
@@ -60,8 +51,15 @@ export function SaleManagerProvider({ children }: { children: React.ReactNode })
     }, [isOpen, location]);
 
     const openSaleSelector = (product: CartProduct) => {
-        setProductToAssign(product);
-        setIsOpen(true);
+        const existingSales = getActiveCartIds();
+        if (existingSales.length === 1) {
+            const targetId = existingSales[0];
+            getCartStore(targetId).getState().addProduct(product);
+            navigate(`/home/${targetId}`);
+        } else {
+            setProductToAssign(product);
+            setIsOpen(true);
+        }
     };
 
     const handleClose = () => {

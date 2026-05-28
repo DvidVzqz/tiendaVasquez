@@ -1,5 +1,3 @@
-import type { Product } from "./productInterface";
-
 export type paymentMethodType = "CARD" | "CASH";
 export interface salesSchema {
     extra: number,

@@ -1,6 +1,5 @@
 import type { SaleVenta, searchSaleSchema } from "../interfaces/salesInterface";
 import api from "./client";
-import { useQuery } from "@tanstack/react-query";
 
 export function postSale(sale: SaleVenta) {
   return api.post("/sale/", sale);

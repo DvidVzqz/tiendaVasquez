@@ -5,7 +5,7 @@ import {
     type FieldValues,
     type RegisterOptions,
 } from 'react-hook-form';
-import { forwardRef, type FC, type LegacyRef, type Ref } from 'react';
+import { forwardRef, type FC, type Ref } from 'react';
 import type React from 'react';
 
 interface PropsInput extends React.InputHTMLAttributes<HTMLInputElement> {

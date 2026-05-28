@@ -5,7 +5,6 @@ import type { Sale, SaleTicket, searchSaleSchema } from "../interfaces/salesInte
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import SaleCard from "../components/SaleCard";
 import { BaseModal } from "../components/UI/modal";
-import { Printer } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 
 export default function History() {

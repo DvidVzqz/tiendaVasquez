@@ -1,6 +1,6 @@
 // components/SearchProductCard.tsx
 
-import { Edit, Trash, ShoppingCart } from "lucide-react";
+import { Edit, ShoppingCart } from "lucide-react";
 import type { Product } from "../interfaces/productInterface";
 
 
@@ -14,7 +14,7 @@ interface Props {
 export default function SearchProductCard({
   product,
   onEdit,
-  onDelete,
+  // onDelete,
   onAddToCart,
 }: Props) {
   return (

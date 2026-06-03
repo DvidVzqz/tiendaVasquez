@@ -12,6 +12,7 @@ interface CartStore {
     addProduct: (product: CartProduct) => void;
     increase: (code: string) => void;
     decrease: (code: string) => void;
+    setQuantity: (code: string, quantity: number) => void;
     remove: (code: string) => void;
     clear: () => void;
 }
@@ -42,7 +43,7 @@ export const getCartStore = (id: string) => {
                             }
 
                             return {
-                                cart: [...state.cart, { ...product, quantity: 1, },],
+                                cart: [...state.cart, { ...product, quantity: product.type === "WEIGHT" ? 1000 : 1, },],
                             };
                         }),
 
@@ -60,6 +61,14 @@ export const getCartStore = (id: string) => {
                                 p.code === code &&
                                     p.quantity > 1
                                     ? { ...p, quantity: p.quantity - 1, } : p
+                            ),
+                        })),
+                    setQuantity: (code, quantity) =>
+                        set((state) => ({
+                            cart: state.cart.map(p =>
+                                p.code === code
+                                    ? { ...p, quantity }
+                                    : p
                             ),
                         })),
 

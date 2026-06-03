@@ -7,6 +7,7 @@ interface Props {
   onIncrease: () => void;
   onDecrease: () => void;
   onRemove: () => void;
+  onSetQuantity: (quantity: number) => void;
 }
 
 export default function ProductCard({
@@ -14,8 +15,13 @@ export default function ProductCard({
   onIncrease,
   onDecrease,
   onRemove,
+  onSetQuantity,
 }: Props) {
-  const total = product.price * product.quantity;
+  let total = 0;
+  if (product.type == "WEIGHT")
+    total = (product.quantity * product.price) / 1000;
+  else
+    total = product.price * product.quantity;
 
   return (
     <div className="bg-gray-950 border border-gray-800 rounded-2xl p-4 mb-3 flex items-center justify-between gap-4">
@@ -43,25 +49,41 @@ export default function ProductCard({
       </div>
 
       {/* Controles */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={onDecrease}
-          className="px-3 py-1 bg-gray-700 hover:bg-gray-800 rounded-lg"
-        >
-          -
-        </button>
+      {product.type === "WEIGHT" ? (
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-sm text-gray-400">Peso:</span>
 
-        <span className="min-w-[30px] text-center">
-          {product.quantity}
-        </span>
+          <input
+            type="number"
+            placeholder="1000"
+            value={product.quantity}
+            onChange={(e) => onSetQuantity(Number(e.target.value))}
+            className="bg-gray-900 rounded-lg px-3 py-2 outline-none"
+            step="5"
+            min="0"
+          />
+        </div>
+      ) : (
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onDecrease}
+            className="px-3 py-1 bg-gray-700 hover:bg-gray-800 rounded-lg"
+          >
+            -
+          </button>
 
-        <button
-          onClick={onIncrease}
-          className="px-3 py-1 bg-gray-700 hover:bg-gray-800 rounded-lg"
-        >
-          +
-        </button>
-      </div>
+          <span className="min-w-[30px] text-center">
+            {product.quantity}
+          </span>
+
+          <button
+            onClick={onIncrease}
+            className="px-3 py-1 bg-gray-700 hover:bg-gray-800 rounded-lg"
+          >
+            +
+          </button>
+        </div>
+      )}
 
       {/* Acciones */}
       <div className="flex flex-col items-end gap-2">

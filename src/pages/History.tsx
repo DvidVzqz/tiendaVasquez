@@ -146,11 +146,11 @@ export default function History() {
                 </div>
 
                 {/* ITEMS */}
-                <div className="space-y-3 max-h-80 overflow-y-auto">
+                <div className="space-y-3 max-h-80 overflow-y-auto ">
                     {sale.items?.map((item, index) => (
                         <div
                             key={index}
-                            className="flex items-center justify-between border-b border-gray-800 pb-2"
+                            className="flex items-center justify-between"
                         >
                             <div>
                                 <p className="font-medium">
@@ -158,20 +158,18 @@ export default function History() {
                                 </p>
 
                                 <p className="text-sm text-gray-400">
-                                    {item.quantity} x $
-                                    {item.price.toFixed(2)}
+                                    {item.quantity} x ${item.price.toFixed(2)}
                                 </p>
                             </div>
 
                             <p className="font-semibold">
-                                $
-                                {(item.quantity * item.price).toFixed(2)}
+                                ${item.subtotal.toFixed(2)}
                             </p>
                         </div>
                     ))}
                 </div>
 
-                <div className="space-y-1 mt-1">
+                <div className="space-y-1 mt-1 border-t border-gray-800">
                     <div className="flex justify-between">
                         <span>
                             Subtotal

@@ -228,9 +228,6 @@ export default function Search() {
                             errors={errors}
                             name="realName"
                             placeholder="Opcional"
-                            rules={{
-                                required: 'Campo requerido',
-                            }}
                         />
 
                         {/* Tipo */}
@@ -288,9 +285,6 @@ export default function Search() {
                             type="number"
                             step="0.01"
                             placeholder="$0.00"
-                            rules={{
-                                required: 'Campo requerido',
-                            }}
                         />
 
                         {/* Stock */}
@@ -316,9 +310,6 @@ export default function Search() {
                             <Controller
                                 control={control}
                                 name={"supplierId"}
-                                rules={{
-                                    required: 'Campo requerido',
-                                }}
                                 render={({ field: { value, onChange } }) => (
                                     <SupplierSelect
                                         bg="bg-gray-800"

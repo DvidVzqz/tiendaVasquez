@@ -21,6 +21,7 @@ export default function Home() {
     addProduct,
     increase,
     decrease,
+    setQuantity,
     remove,
     clear,
   } = useCartStore();
@@ -44,8 +45,8 @@ export default function Home() {
     }
   })();
 
-  const totalItems = cart.reduce((acc, p) => acc + p.quantity, 0);
-  const subtotal = cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
+  const totalItems = cart.reduce((acc, p) => acc + (p.type === "WEIGHT" ? 1 : p.quantity), 0);
+  const subtotal = cart.reduce((acc, p) => acc + (p.type === "WEIGHT" ? (p.price * p.quantity) / 1000 : p.price * p.quantity), 0);
   const comision = paymentMethod == "CARD" ? ((subtotal + extra) * (savedCommission / 100)) : 0;
   const total = subtotal + extra + comision;
 
@@ -69,6 +70,9 @@ export default function Home() {
             <ProductCard
               key={product.code}
               product={product}
+              onSetQuantity={(quantity) =>
+                setQuantity(product.code, quantity)
+              }
               onIncrease={() =>
                 increase(product.code)
               }

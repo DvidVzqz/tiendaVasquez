@@ -52,6 +52,7 @@ export default function Home() {
   const addCalculatorValue = (value: string) => setCalculator(calculator + value);
 
   const handleSubmit = () => {
+    if (total <= 0) return;
     saleMutation.mutate({ paymentMethod, extra, comision, items: cart.map(x => ({ productId: x.id, quantity: x.quantity })) });
   }
 

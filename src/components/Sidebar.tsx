@@ -14,6 +14,7 @@ import {
   Trash,
 } from "lucide-react";
 import { deleteCartStore, getActiveCartIds } from "../hooks/useCartStore";
+import { v4 as uuidv4 } from 'uuid';
 
 const menuItems = [
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
@@ -38,7 +39,7 @@ export default function Sidebar() {
     e.preventDefault();
     e.stopPropagation();
 
-    const newId = crypto.randomUUID().substring(0, 8);
+    const newId = uuidv4(undefined, undefined, 8);
     setCollapsed(true);
     navigate(`/home/${newId}`);
   };

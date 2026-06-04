@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Reloj() {
     // 1. Estado inicial con la hora del sistema

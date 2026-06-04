@@ -44,6 +44,7 @@ export default function History() {
                 {/* Fecha inicio */}
                 <input
                     type="date"
+                    placeholder="Fecha inicio"
                     value={filters.startDate || ""}
                     onChange={(e) =>
                         setFilters((prev) => ({
@@ -51,12 +52,13 @@ export default function History() {
                             startDate: e.target.value,
                         }))
                     }
-                    className="bg-gray-900 rounded-lg px-3 py-2 outline-none"
+                    className="w-full bg-gray-900 rounded-lg px-3 py-2 outline-none"
                 />
 
                 {/* Fecha fin */}
                 <input
                     type="date"
+                    placeholder="Fecha fin"
                     value={filters.endDate?.split('T')[0] || ""}
                     onChange={(e) =>
                         setFilters((prev) => ({
@@ -64,7 +66,7 @@ export default function History() {
                             endDate: e.target.value + "T23:59:59",
                         }))
                     }
-                    className="bg-gray-900 rounded-lg px-3 py-2 outline-none"
+                    className="w-full bg-gray-900 rounded-lg px-3 py-2 outline-none"
                 />
 
                 {/* Total mínimo */}

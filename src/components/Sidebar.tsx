@@ -17,7 +17,7 @@ import { deleteCartStore, getActiveCartIds } from "../hooks/useCartStore";
 import { v4 as uuidv4 } from 'uuid';
 
 const menuItems = [
-  { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { name: "Dashboard", path: "/", icon: LayoutDashboard },
   { name: "Buscar", path: "/search", icon: Search },
   { name: "Historial", path: "/history", icon: History },
   { name: "Proveedores", path: "/suppliers", icon: Users2Icon },

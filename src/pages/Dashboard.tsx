@@ -23,18 +23,22 @@ const PRESET_LABELS: Record<Preset, string> = {
   year: "Año",
 };
 
+function formatDateLocal(date: Date): string {
+  const offset = date.getTimezoneOffset();
+  const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+  return localDate.toISOString().split('T')[0];
+}
+
 function getDateRange(preset: Preset) {
   const now = new Date();
-  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
   let start: Date;
   switch (preset) {
     case "today":
-      start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      start = new Date(now);
       break;
     case "week": {
       start = new Date(now);
       start.setDate(now.getDate() - now.getDay());
-      start.setHours(0, 0, 0, 0);
       break;
     }
     case "month":
@@ -44,7 +48,16 @@ function getDateRange(preset: Preset) {
       start = new Date(now.getFullYear(), 0, 1);
       break;
   }
-  return { startDate: start.toISOString(), endDate: endOfDay.toISOString() };
+
+  return {
+    startDate: formatDateLocal(start),
+    endDate: formatDateLocal(now),
+  };
+}
+
+function parseLocalDate(dateStr: string) {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  return new Date(year, month - 1, day);
 }
 
 const currency = (n: number) =>
@@ -116,7 +129,10 @@ export default function Dashboard() {
                     <Bar
                       data={{
                         labels: data.sales.dailyBreakdown.map((d) =>
-                          new Date(d.date).toLocaleDateString("es-MX", { weekday: "short", day: "numeric" })
+                          parseLocalDate(d.date).toLocaleDateString("es-MX", {
+                            weekday: "short",
+                            day: "numeric",
+                          })
                         ),
                         datasets: [
                           {
@@ -139,7 +155,7 @@ export default function Dashboard() {
                             callbacks: {
                               title: (items) => {
                                 const idx = items[0].dataIndex;
-                                return new Date(data.sales.dailyBreakdown[idx].date).toLocaleDateString(
+                                return parseLocalDate(data.sales.dailyBreakdown[idx].date).toLocaleDateString(
                                   "es-MX",
                                   { weekday: "long", day: "numeric", month: "short" }
                                 );
@@ -173,7 +189,7 @@ export default function Dashboard() {
                   <h2 className="text-lg font-bold text-gray-800">Poco Stock</h2>
                 </div>
 
-                <div className="space-y-3">
+                <div className="h-80 space-y-3 flex-1 overflow-hidden overflow-y-auto">
                   {data.products.lowStock.length === 0 && (
                     <p className="text-gray-500 text-sm">
                       Todos los productos tienen stock suficiente

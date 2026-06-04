@@ -39,10 +39,10 @@ export default function ProductCard({
             {product.name}
           </h2>
 
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-300 font-semibold">
             Precio: ${product.price.toFixed(2)}
           </p>
-          <p className="text-sm font-medium">
+          <p className="text-sm font-bold">
             Total: ${total.toFixed(2)}
           </p>
         </div>

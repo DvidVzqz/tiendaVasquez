@@ -83,7 +83,7 @@ export default function Suppliers() {
                 </button>
             </div>
 
-            <div className="flex-1 bg-black rounded-2xl shadow-md overflow-hidden p-2">
+            <div className="flex-1 bg-black rounded-2xl shadow-md overflow-hidden overflow-y-auto p-2">
                 {isLoading && (
                     <p>Cargando proveedores...</p>
                 )}

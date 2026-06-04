@@ -6,6 +6,7 @@ import { getCartStore } from "../hooks/useCartStore";
 import { useParams } from "react-router-dom";
 import { SearchProductInput } from "../components/SearchProductInput";
 import type { paymentMethodType } from "../interfaces/salesInterface";
+import Reloj from "../components/RelojComponent";
 
 export default function Home() {
   const { saleId = "base" } = useParams();
@@ -60,12 +61,15 @@ export default function Home() {
   return (
     <div className="h-screen flex-1 grid grid-cols-12 gap-1 p-1 overflow-hidden">
       {/* 🛒 PRODUCTOS */}
-      <div className="col-span-9 bg-black rounded-2xl shadow-md p-4 overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">
-          Productos
-        </h2>
+      <div className="col-span-9 bg-black rounded-2xl shadow-md p-4 ">
+        <div className="flex items-center justify-between mb-1">
+          <h2 className="text-xl font-bold ml-2 mb-1">
+            Productos
+          </h2>
+          <Reloj />
+        </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3 overflow-y-auto pr-2 h-[88vh]">
           {cart.map(product => (
             <ProductCard
               key={product.code}
@@ -88,7 +92,7 @@ export default function Home() {
       </div>
 
       {/* 💰 PANEL DERECHO */}
-      <div className="col-span-3 flex flex-col gap-1">
+      <div className="col-span-3 flex flex-col gap-1 overflow-y-auto">
         <div className="flex p-2 bg-black rounded-2xl shadow-md gap-1 w-full">
           <SearchProductInput onSelectProduct={addProduct} />
         </div>

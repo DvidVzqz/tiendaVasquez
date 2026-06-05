@@ -6,8 +6,10 @@ import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import SaleCard from "../components/SaleCard";
 import { BaseModal } from "../components/UI/modal";
 import { useMutation } from "@tanstack/react-query";
+import { useGlobalAlerts } from "../contexts/LoadingContext";
 
 export default function History() {
+    const { showAlert } = useGlobalAlerts();
     const savedStoreName = localStorage.getItem("store_name");
     const [filters, setFilters] = useState<searchSaleSchema>({});
     const debouncedFilters = useDebounce(filters, 500);
@@ -28,13 +30,10 @@ export default function History() {
     const { mutate } = useMutation({
         mutationFn: getSale,
         onSuccess: ({ data }) => {
-            console.log(data.data);
             setSale(data.data);
             setOpen(true);
         },
-        onError: () => {
-            console.error("Venta no encontrado");
-        },
+        onError: () => showAlert("Venta no encontrada", "error"),
     });
     return (
         <div className="h-screen p-1 overflow-hidden flex flex-col">

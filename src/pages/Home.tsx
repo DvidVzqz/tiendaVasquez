@@ -7,8 +7,10 @@ import { useParams } from "react-router-dom";
 import { SearchProductInput } from "../components/SearchProductInput";
 import type { paymentMethodType } from "../interfaces/salesInterface";
 import Reloj from "../components/RelojComponent";
+import { useGlobalAlerts } from "../contexts/LoadingContext";
 
 export default function Home() {
+  const { showAlert } = useGlobalAlerts();
   const { saleId = "base" } = useParams();
   const useCartStore = getCartStore(saleId);
   const savedCommission = Number(localStorage.getItem("card_commission"));
@@ -30,9 +32,7 @@ export default function Home() {
   const saleMutation = useMutation({
     mutationFn: postSale,
     onSuccess: clear,
-    onError: () => {
-      console.error("Venta no registrada");
-    },
+    onError: () => showAlert("Error al procesar la venta", "error"),
   });
 
   // 🔥 Eval calculadora
@@ -54,7 +54,10 @@ export default function Home() {
   const addCalculatorValue = (value: string) => setCalculator(calculator + value);
 
   const handleSubmit = () => {
-    if (total <= 0) return;
+    if (total <= 0) {
+      showAlert("La venta no puede estar vacía", "info");
+      return;
+    }
     saleMutation.mutate({ paymentMethod, extra, comision, items: cart.map(x => ({ productId: x.id, quantity: x.quantity })) });
   }
 

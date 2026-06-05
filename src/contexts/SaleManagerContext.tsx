@@ -7,6 +7,7 @@ import { getActiveCartIds, getCartStore } from "../hooks/useCartStore";
 import { useBarcodeScanner } from "../hooks/useBarcodeScanner";
 import { useMutation } from "@tanstack/react-query";
 import { getProduct } from "../api/products";
+import { useGlobalAlerts } from "./LoadingContext";
 
 interface SaleManagerContextType {
     openSaleSelector: (product: CartProduct) => void;
@@ -15,6 +16,7 @@ interface SaleManagerContextType {
 const SaleManagerContext = createContext<SaleManagerContextType | undefined>(undefined);
 
 export function SaleManagerProvider({ children }: { children: React.ReactNode }) {
+    const { showAlert } = useGlobalAlerts();
     const [isOpen, setIsOpen] = useState(false);
     const [productToAssign, setProductToAssign] = useState<CartProduct | null>(null);
     const [activeSales, setActiveSales] = useState<string[]>([]);
@@ -32,12 +34,10 @@ export function SaleManagerProvider({ children }: { children: React.ReactNode })
                     openSaleSelector(data.data);
                 }
             } catch (error) {
-                console.error("Error al buscar el producto escaneado", error);
+                showAlert("Error al agregar el producto escaneado", "error");
             }
         },
-        onError: () => {
-            console.error("Producto no encontrado");
-        },
+        onError: () => showAlert("Producto no encontrado", "error"),
     });
 
     useBarcodeScanner({ onScan: mutate });

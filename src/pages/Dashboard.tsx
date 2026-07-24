@@ -84,12 +84,11 @@ export default function Dashboard() {
   return (
     <div className="h-screen p-1 flex flex-col">
       <div className="overflow-y-auto min-h-0 flex-1">
-        <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-3">
+        <header className="bg-black p-4 rounded-xl mb-1 grid grid-cols-1 md:grid-cols-7 gap-4">
           <div>
-            <h1 className="text-xl font-bold text-gray-800">Dashboard</h1>
+            <h1 className="text-4xl font-bold text-gray-800">Dashboard</h1>
           </div>
           <div></div>
-          <div className="flex gap-2">
             {/* Proveedor */}
             <SupplierSelect
                 selectedSupplierId={filters.supplierId || ""}
@@ -104,13 +103,12 @@ export default function Dashboard() {
               <button
                 key={key}
                 onClick={() => setPreset(key)}
-                className={`px-4 py-2 rounded-xl ${preset === key ? "bg-gray-700 text-white" : "bg-black text-gray-300"
+                className={`px-4 py-2 rounded-xl ${preset === key ? "bg-gray-700 text-white" : "bg-gray-900 text-gray-300"
                   } shadow`}
               >
                 {PRESET_LABELS[key]}
               </button>
             ))}
-          </div>
         </header>
 
         {isLoading && (

@@ -34,9 +34,9 @@ export interface DashboardData {
   };
 }
 
-export async function getDashboard(startDate: string, endDate: string) {
+export async function getDashboard(startDate: string, endDate: string, supplierId?: string) {
   const { data } = await api.get("report/dashboard", {
-    params: { startDate, endDate },
+    params: { startDate, endDate, supplierId },
   });
   return data.data as DashboardData;
 }

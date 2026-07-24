@@ -13,6 +13,9 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 import { useQuery } from "@tanstack/react-query";
 import { getDashboard, type DashboardData } from "../api/reports";
+import { SupplierSelect } from "../components/SupplierSelect";
+import type { searchProductSchema } from "../interfaces/productInterface";
+import { useDebounce } from "../hooks/useDebounce";
 
 type Preset = "today" | "week" | "month" | "year";
 
@@ -68,11 +71,14 @@ const time = (iso: string) =>
 
 export default function Dashboard() {
   const [preset, setPreset] = useState<Preset>("today");
+  const [filters, setFilters] = useState<searchProductSchema>({});
   const { startDate, endDate } = useMemo(() => getDateRange(preset), [preset]);
 
+  const debouncedFilters = useDebounce(filters, 500);
   const { data, isLoading, isError } = useQuery<DashboardData>({
-    queryKey: ["dashboard", startDate, endDate],
-    queryFn: () => getDashboard(startDate, endDate),
+    queryKey: ["dashboard", startDate, endDate, debouncedFilters],
+    queryFn: () => getDashboard(startDate, endDate, debouncedFilters.supplierId),
+    placeholderData: (previousData) => previousData,
   });
 
   return (
@@ -82,8 +88,18 @@ export default function Dashboard() {
           <div>
             <h1 className="text-xl font-bold text-gray-800">Dashboard</h1>
           </div>
-
+          <div></div>
           <div className="flex gap-2">
+            {/* Proveedor */}
+            <SupplierSelect
+                selectedSupplierId={filters.supplierId || ""}
+                onSelectSupplier={(id) => {
+                    setFilters(prev => {
+                        const { supplierId, ...rest } = prev;
+                        return { ...rest, ...(id ? { supplierId: id } : {}) };
+                    });
+                }}
+            />
             {(Object.keys(PRESET_LABELS) as Preset[]).map((key) => (
               <button
                 key={key}

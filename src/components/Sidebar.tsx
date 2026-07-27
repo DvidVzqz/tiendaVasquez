@@ -35,6 +35,9 @@ export default function Sidebar() {
     setActiveSales(getActiveCartIds());
   }, [location]);
 
+  // Excluimos "base" porque esa es la venta principal, ya tiene su propio ítem
+  const secondarySales = activeSales.filter((id) => id !== "base");
+
   const handleCreateNewSale = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -63,6 +66,20 @@ export default function Sidebar() {
 
         {/* ELEMENTO ESPECIAL: HOME / VENTAS */}
         <div className="space-y-1">
+          {/* VENTA PRINCIPAL */}
+          <NavLink
+            to="/home/base"
+            end
+            className={({ isActive }) =>
+              `flex items-center gap-3 p-3 rounded-lg transition-colors
+              ${isActive ? "bg-gray-600" : "hover:bg-gray-700"}`
+            }
+          >
+            <Store size={20} />
+            {!collapsed && <span className="font-medium">Venta Principal</span>}
+          </NavLink>
+
+          {/* AGREGAR VENTA (secundaria) */}
           <div className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-700/50 group text-gray-300">
             <button onClick={handleCreateNewSale} className="flex items-center gap-3">
               <Plus size={20} />
@@ -75,15 +92,15 @@ export default function Sidebar() {
                 className="p-1 hover:bg-blue-600 bg-blue-500 rounded text-white transition-colors"
                 title="Nueva Venta"
               >
-                <Store size={16} />
+                <Plus size={16} />
               </button>
             )}
           </div>
 
-          {/* Sublista de Ventas Activas (Solo si no está colapsado) */}
-          {activeSales.length > 0 && (
+          {/* Sublista de Ventas Secundarias Activas */}
+          {secondarySales.length > 0 && (
             <div className={`${!collapsed ? 'pl-6  ml-5' : ''} space-y-1 border-l border-gray-700`}>
-              {activeSales.map((id, index) => (
+              {secondarySales.map((id, index) => (
                 <NavLink
                   key={id}
                   to={`/home/${id}`}

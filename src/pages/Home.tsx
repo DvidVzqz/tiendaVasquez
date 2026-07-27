@@ -2,8 +2,8 @@
 import { useMutation } from "@tanstack/react-query";
 import ProductCard from "../components/CartProduct";
 import { postSale } from "../api/sales";
-import { getCartStore } from "../hooks/useCartStore";
-import { useParams } from "react-router-dom";
+import { deleteCartStore, getCartStore } from "../hooks/useCartStore";
+import { useNavigate, useParams } from "react-router-dom";
 import { SearchProductInput } from "../components/SearchProductInput";
 import type { paymentMethodType } from "../interfaces/salesInterface";
 import Reloj from "../components/RelojComponent";
@@ -14,6 +14,7 @@ export default function Home() {
   const { saleId = "base" } = useParams();
   const useCartStore = getCartStore(saleId);
   const savedCommission = Number(localStorage.getItem("card_commission"));
+  const navigate = useNavigate();
 
   const {
     cart,
@@ -31,7 +32,14 @@ export default function Home() {
 
   const saleMutation = useMutation({
     mutationFn: postSale,
-    onSuccess: clear,
+    onSuccess: () => {
+      clear();
+      // Si la venta cobrada era secundaria, se elimina y regresamos a la venta principal
+      if (saleId !== "base") {
+        deleteCartStore(saleId);
+        navigate("/home/base");
+      }
+    },
     onError: () => showAlert("Error al procesar la venta", "error"),
   });
 
@@ -89,6 +97,10 @@ export default function Home() {
               onRemove={() =>
                 remove(product.code)
               }
+              // onEdit={() => {
+              //   setValues(product);
+              //   setOpenForm(true);
+              // }}
             />
           ))}
         </div>

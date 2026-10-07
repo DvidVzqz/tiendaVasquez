@@ -71,3 +71,8 @@ export default defineConfig([
   },
 ])
 ```
+npm run nuild
+npx cap sync
+npx cap add android
+npx cap sync android
+npx cap open android

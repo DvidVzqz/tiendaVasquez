@@ -2,60 +2,81 @@ import { useEffect, useRef } from "react";
 
 interface UseBarcodeScannerProps {
   onScan: (code: string) => void;
+  minLength?: number;
+  maxKeyDelay?: number;
 }
 
-export const useBarcodeScanner = ({ onScan }: UseBarcodeScannerProps) => {
-  const bufferRef = useRef<string>("");
-  const lastKeyTimeRef = useRef<number>(0);
-  const isScanningRef = useRef<boolean>(false);
+export const useBarcodeScanner = ({
+  onScan,
+  minLength = 5,
+  maxKeyDelay = 50,
+}: UseBarcodeScannerProps) => {
+  const bufferRef = useRef("");
+  const lastKeyTimeRef = useRef(0);
+
+  const targetRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+  const originalValueRef = useRef("");
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-
-      const target = event.target as HTMLElement;
-      if (
-        target.tagName === "INPUT" ||
-        target.tagName === "SELECT" ||
-        target.tagName === "TEXTAREA" ||
-        target.isContentEditable
-      ) {
-        return;
-      }
-
       const currentTime = Date.now();
       const timeDiff = currentTime - lastKeyTimeRef.current;
+
+      const target = event.target as HTMLElement | null;
+
+      const isInput =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement;
+
+      // const isEditable = isInput || target?.isContentEditable === true;
+
+      if (bufferRef.current && timeDiff > maxKeyDelay) {
+        bufferRef.current = "";
+        targetRef.current = null;
+        originalValueRef.current = "";
+      }
+
       lastKeyTimeRef.current = currentTime;
 
       if (event.key === "Enter") {
-        if (isScanningRef.current && bufferRef.current.length > 2) {
+        const code = bufferRef.current;
+
+        if (code.length >= minLength) {
           event.preventDefault();
           event.stopPropagation();
 
-          onScan(bufferRef.current);
+          if (targetRef.current) {
+            targetRef.current.value = originalValueRef.current;
+            targetRef.current.dispatchEvent(new Event("input", { bubbles: true, }));
+          }
+
+          bufferRef.current = "";
+          targetRef.current = null;
+          originalValueRef.current = "";
+
+          onScan(code);
         }
 
-        bufferRef.current = "";
-        isScanningRef.current = false;
         return;
       }
 
-      if (timeDiff < 30 || bufferRef.current === "") {
-        if (bufferRef.current !== "") {
-          isScanningRef.current = true;
-        }
+      if (event.key.length !== 1) return;
 
-        if (event.key.length === 1) {
-          bufferRef.current += event.key;
+      if (!bufferRef.current) {
+        if (isInput) {
+          targetRef.current = target;
+          originalValueRef.current = target.value;
+        } else {
+          targetRef.current = null;
+          originalValueRef.current = "";
         }
+      }
 
-        if (isScanningRef.current) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
+      bufferRef.current += event.key;
 
-      } else {
-        bufferRef.current = event.key.length === 1 ? event.key : "";
-        isScanningRef.current = false;
+      if (bufferRef.current.length >= 2 && timeDiff <= maxKeyDelay) {
+        event.preventDefault();
+        event.stopPropagation();
       }
     };
 

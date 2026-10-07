@@ -1,21 +1,19 @@
 import { useState } from "react";
 import SearchProductCard from "../components/SearchProductCard";
-import type { CartProduct, Product, productSchema, searchProductSchema } from "../interfaces/productInterface";
-import { postProduct, putProduct, searchProducts } from "../api/products";
+import type { CartProduct, Product, searchProductSchema } from "../interfaces/productInterface";
+import { searchProducts } from "../api/products";
 import { useDebounce } from "../hooks/useDebounce";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import { SupplierSelect } from "../components/SupplierSelect";
-import { BaseModal } from "../components/UI/modal";
-import { useFormulario } from "../hooks/useFormulario";
-import { Input } from "../components/UI/Input";
-import { Controller } from "react-hook-form";
-import { updateProductInAllCarts } from "../hooks/useCartStore";
 import { useSaleManager } from "../contexts/SaleManagerContext";
+import { useProductContext } from "../contexts/ProductContext";
+import { useParams } from "react-router-dom";
 
 export default function Search() {
+    const { type = 'UNIT' } = useParams();
     const { openSaleSelector } = useSaleManager();
+    const { reset, setOpenForm, setValues, setCallback } = useProductContext();
     const [filters, setFilters] = useState<searchProductSchema>({});
-    const [openForm, setOpenForm] = useState(false);
 
     const debouncedFilters = useDebounce(filters, 500);
     const {
@@ -24,33 +22,14 @@ export default function Search() {
         isLoading, refetch } = useInfiniteScroll<Product>({
             queryFn: ({ pageParam }) => searchProducts({
                 ...debouncedFilters,
+                type: type as "UNIT" | "WEIGHT",
                 ...(pageParam ? { cursor: pageParam } : {}),
             }),
-            queryKey: "products-search",
+            queryKey: `products-search-${type}`,
             debouncedFilters
         });
 
-    const {
-        useForm: {
-            control,
-            setValues,
-            reset,
-            clearErrors,
-            watch,
-            formState: { errors },
-        },
-        onSubmit,
-    } = useFormulario(
-        {
-            mutationFn: data => data.id ? putProduct(data.id, data as productSchema) : postProduct(data as productSchema),
-            onSuccess({ data }) {
-                refetch();
-                if (data.data) updateProductInAllCarts(data.data as CartProduct);
-                setOpenForm(false);
-            },
-        },
-        { defaultValues: { type: 'UNIT' } },
-    );
+    setCallback(() => refetch());
 
     return (
         <div className="h-screen p-1 overflow-hidden flex flex-col">
@@ -114,8 +93,8 @@ export default function Search() {
                     />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Type */}
+                {/* Type */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <select
                         value={filters.type || ""}
                         onChange={(e) =>
@@ -129,18 +108,17 @@ export default function Search() {
                         <option value="">Todos</option>
                         <option key="UNIT" value="UNIT">Unidad</option>
                         <option key="WEIGHT" value="WEIGHT">Peso</option>
-                    </select>
-
-                    <button
-                        onClick={() => {
-                            reset();
-                            setOpenForm(true);
-                        }}
-                        className="bg-gray-700 text-white px-5 py-3 rounded-xl font-medium hover:opacity-90 transition"
-                    >
-                        Nuevo
-                    </button>
-                </div>
+                    </select> 
+                </div> */}
+                <button
+                    onClick={() => {
+                        reset();
+                        setOpenForm(true);
+                    }}
+                    className="bg-gray-700 text-white px-5 py-3 rounded-xl font-medium hover:opacity-90 transition"
+                >
+                    Nuevo
+                </button>
             </div>
 
             {/* Productos */}
@@ -176,177 +154,6 @@ export default function Search() {
                 </div>
             </div>
 
-            {/* Modal de productos */}
-            <BaseModal open={openForm} onClose={() => {
-                setOpenForm(false);
-                clearErrors();
-            }}>
-                <div className="flex flex-col gap-6">
-                    {/* Header */}
-                    <div>
-                        <h2 className="text-2xl font-bold">
-                            {watch("id") ? "Editar" : "Nuevo"} Producto
-                        </h2>
-
-                        <p className="text-gray-400 text-sm mt-1">
-                            Completa la información del
-                            producto
-                        </p>
-                    </div>
-
-                    {/* Form */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                        {/* Código */}
-                        <Input
-                            label="Código"
-                            control={control}
-                            errors={errors}
-                            name="code"
-                            placeholder="Ej. 750123456"
-                            rules={{
-                                required: 'Campo requerido',
-                            }}
-                        />
-
-                        {/* Nombre */}
-                        <Input
-                            label="Nombre"
-                            control={control}
-                            errors={errors}
-                            name="name"
-                            placeholder="Coca Cola 600ml"
-                            rules={{
-                                required: 'Campo requerido',
-                            }}
-                        />
-
-                        {/* Nombre real */}
-                        <Input
-                            label="Nombre real"
-                            control={control}
-                            errors={errors}
-                            name="realName"
-                            placeholder="Opcional"
-                        />
-
-                        {/* Tipo */}
-                        <div className="flex flex-col gap-2">
-                            <label className="text-sm text-gray-300">
-                                Tipo
-                            </label>
-                            <Controller
-                                control={control}
-                                name={"type"}
-                                rules={{
-                                    required: 'Campo requerido',
-                                }}
-                                render={({ field: { onChange, onBlur, value } }) => (
-                                    <select
-                                        onChange={onChange}
-                                        onBlur={onBlur}
-                                        value={value}
-                                        className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-blue-500"
-                                    >
-                                        <option value="UNIT">
-                                            Por unidad
-                                        </option>
-
-                                        <option value="WEIGHT">
-                                            Por peso
-                                        </option>
-                                    </select>
-                                )}
-                            />
-
-                            <p>{!!errors["type"] && (errors["type"].message) as string}</p>
-                        </div>
-
-                        {/* Precio */}
-                        <Input
-                            label="Precio de venta"
-                            control={control}
-                            errors={errors}
-                            name="price"
-                            step="0.01"
-                            placeholder="$0.00"
-                            type="number"
-                            rules={{
-                                required: 'Campo requerido',
-                            }}
-                        />
-
-                        {/* Precio real */}
-                        <Input
-                            label="Precio real"
-                            control={control}
-                            errors={errors}
-                            name="realPrice"
-                            type="number"
-                            step="0.01"
-                            placeholder="$0.00"
-                        />
-
-                        {/* Stock */}
-                        <Input
-                            label="Stock inicial"
-                            control={control}
-                            errors={errors}
-                            name="stock"
-                            type="number"
-                            step="1"
-                            placeholder="0"
-                            rules={{
-                                required: 'Campo requerido',
-                            }}
-                        />
-
-                        {/* Proveedor */}
-                        <div className="flex flex-col gap-2">
-                            <label className="text-sm text-gray-300">
-                                Proveedor
-                            </label>
-
-                            <Controller
-                                control={control}
-                                name={"supplierId"}
-                                render={({ field: { value, onChange } }) => (
-                                    <SupplierSelect
-                                        bg="bg-gray-800"
-                                        allowNull={false}
-                                        selectedSupplierId={value}
-                                        onSelectSupplier={(id) => onChange(id)}
-                                    />
-                                )} />
-
-                            <p>{!!errors["supplierId"] && (errors["supplierId"].message) as string}</p>
-                        </div>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="flex justify-end gap-3">
-                        <button
-                            onClick={() => {
-                                setOpenForm(false);
-                                clearErrors();
-                            }}
-                            className="px-5 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 transition"
-                        >
-                            Cancelar
-                        </button>
-
-                        <button
-                            className="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 transition"
-                            onClick={() => {
-                                clearErrors();
-                                onSubmit();
-                            }}
-                        >
-                            Guardar producto
-                        </button>
-                    </div>
-                </div>
-            </BaseModal>
         </div>
     );
 }

@@ -12,13 +12,15 @@ import {
   Plus,
   ShoppingBag,
   Trash,
+  Scale,
 } from "lucide-react";
 import { deleteCartStore, getActiveCartIds } from "../hooks/useCartStore";
 import { v4 as uuidv4 } from 'uuid';
 
 const menuItems = [
   { name: "Dashboard", path: "/", icon: LayoutDashboard },
-  { name: "Buscar", path: "/search", icon: Search },
+  { name: "Buscar", path: "/search/UNIT", icon: Search },
+  { name: "Pesado", path: "/search/WEIGHT", icon: Scale },
   { name: "Historial", path: "/history", icon: History },
   { name: "Proveedores", path: "/suppliers", icon: Users2Icon },
   { name: "Configuración", path: "/settings", icon: Settings },
